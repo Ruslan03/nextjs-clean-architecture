@@ -1,84 +1,88 @@
-# Clean Architecture Fundamentals (Studi Kasus: Product Listing & Checkout)
+# Clean Architecture Fundamentals (Case Study: Product Listing & Checkout)
 
-Proyek ini adalah implementasi **Pure Clean Architecture (Layer-First)** di Next.js tanpa FDD (*Feature-Driven Development*) dan tanpa kompleksitas Atomic Design, khusus untuk studi kasus **Product Listing, Detail, dan Checkout Pemesanan**.
+This project is an implementation of **Pure Clean Architecture (Layer-First)** in Next.js without FDD (*Feature-Driven Development*) and without unnecessary Atomic Design complexity, specifically designed for a **Product Listing, Detail, and Checkout Flow** case study.
 
-Infrastruktur API disediakan menggunakan **Next.js Route Handlers (`src/app/api/...`)** yang diperlakukan sepenuhnya sebagai **simulasi REST backend dan 3rd-party logistics service eksternal ("CekOngkir")**.
+The API infrastructure is simulated using **Next.js Route Handlers (`src/app/api/...`)**, which are treated strictly as an **external REST backend and an external 3rd-party logistics service ("CekOngkir")**.
 
 ---
 
-## 🏛️ Struktur Lapisan Arsitektur (Pure Clean Architecture)
+## 🏛️ Architecture Layer Structure (Pure Clean Architecture)
 
 ```
 src/
 ├── domain/                                    # Enterprise Business Rules & Entities
-│   ├── product.ts                             # Entity Product & helper formatting harga
-│   ├── shipping.ts                            # Entity DestinationCity
-│   └── order.ts                               # Entity Order, validasi no. telp & kalkulasi total
+│   ├── product.ts                             # Product entity & currency formatting helper
+│   ├── shipping.ts                            # DestinationCity entity
+│   └── order.ts                               # Order entity, phone number validation & total calculation
 │
 ├── use-cases/                                 # Application Business Rules
-│   ├── interfaces/                            # Kontrak / Abstraksi Interface (Ports)
-│   │   ├── product-repository.ts              # Interface Kontrak: ProductRepository
-│   │   ├── order-repository.ts                # Interface Kontrak: OrderRepository
-│   │   └── shipping-service.ts                # Interface Kontrak: ShippingService
-│   ├── get-products.ts                        # Interactor: Ambil daftar produk
-│   ├── get-product-by-id.ts                   # Interactor: Ambil single produk via ID
-│   ├── get-shipping-cities.ts                 # Interactor: Ambil daftar kota & tarif ekspedisi
-│   └── checkout.ts                            # Interactor: Orkestrasi validasi & pembuatan pesanan
+│   ├── interfaces/                            # Port Interfaces / Abstraction Contracts
+│   │   ├── product-repository.ts              # Port Interface: ProductRepository
+│   │   ├── order-repository.ts                # Port Interface: OrderRepository
+│   │   └── shipping-service.ts                # Port Interface: ShippingService
+│   ├── get-products.ts                        # Interactor: Retrieve product listing
+│   ├── get-product-by-id.ts                   # Interactor: Retrieve single product by ID
+│   ├── get-shipping-cities.ts                 # Interactor: Retrieve destination cities & shipping rates
+│   └── checkout.ts                            # Interactor: Orchestrate validation & order creation
 │
 ├── infrastructure/                            # Frameworks & Drivers (External Interfaces)
-│   ├── api/                                   # Infrastruktur Backend Internal (Product & Order)
+│   ├── api/                                   # Internal Backend Infrastructure (Product & Order)
 │   │   ├── api-client.ts                      # Centralized API fetch, error normalization & timeout
 │   │   └── repositories/
-│   │       ├── api-product-repository.ts      # Adapter API + Product DTO & Mapper (ACL)
-│   │       └── api-order-repository.ts        # Adapter API + Order DTO & Mapper (ACL)
+│   │       ├── api-product-repository.ts      # API Adapter + Product DTO & Mapper (ACL)
+│   │       └── api-order-repository.ts        # API Adapter + Order DTO & Mapper (ACL)
 │   ├── shipping/                              # Third-Party External Logistics Service ("CekOngkir")
-│   │   └── cekongkir-shipping-service.ts      # Adapter CekOngkir + DTO & Mapper (ACL)
+│   │   └── cekongkir-shipping-service.ts      # CekOngkir Adapter + DTO & Mapper (ACL)
 │   └── registry.ts                            # Composition Root (Dependency Injection)
 │
 ├── controllers/                               # Interface Adapters
-│   ├── product-controller.ts                  # Controller query produk
-│   ├── shipping-controller.ts                 # Controller query kota & tarif ekspedisi
-│   └── checkout-controller.ts                 # Server Action & Controller untuk submit checkout
+│   ├── product-controller.ts                  # Product query controller
+│   ├── shipping-controller.ts                 # Shipping cities & rates query controller
+│   └── checkout-controller.ts                 # Server Action & Controller for checkout submission
 │
 ├── presentation/                              # Presentation Layer
 │   ├── store/                                 # Redux Toolkit Client State Management
-│   │   ├── visitor-slice.ts                   # Slice: Nama, Alamat, Kota, & Modal Status
+│   │   ├── visitor-slice.ts                   # Slice: Name, Address, City & Modal Status
+│   │   ├── product-slice.ts                   # Slice: Product list pagination state
 │   │   ├── index.ts                           # Store Config & Typed Hooks (useAppDispatch, useAppSelector)
 │   │   └── provider.tsx                       # Client StoreProvider + LocalStorage Persistence Sync
-│   ├── pages/                                 # Page Views (Halaman)
-│   │   ├── products-page.tsx                  # Halaman katalog produk
-│   │   ├── product-detail-page.tsx            # Halaman detail spesifikasi produk
-│   │   └── checkout-page.tsx                  # Halaman form checkout & ringkasan produk
-│   └── components/                            # Reusable Components (Bukan Atomic)
-│       ├── navbar.tsx                         # Header navigasi (Terhubung ke Redux Store)
+│   ├── pages/                                 # Page Views
+│   │   ├── products-page.tsx                  # Product catalog page
+│   │   ├── product-detail-page.tsx            # Product specification detail page
+│   │   └── checkout-page.tsx                  # Checkout form & order summary page
+│   └── components/                            # Reusable Components (Non-atomic)
+│       ├── navbar.tsx                         # Header navigation (Connected to Redux Store)
 │       ├── footer.tsx                         # Footer
-│       ├── product-card.tsx                   # Kartu produk Orbit
-│       ├── product-grid.tsx                   # Grid responsif daftar produk
-│       ├── visitor-modal.tsx                  # Modal dialog input nama & alamat pengunjung pertama
-│       └── checkout-form.tsx                  # Form interaktif checkout + auto-prefill dari Redux
+│       ├── product-card.tsx                   # Product card component
+│       ├── product-grid.tsx                   # Responsive product grid
+│       ├── visitor-modal.tsx                  # First-time visitor onboarding modal dialog
+│       └── checkout-form.tsx                  # Interactive checkout form + auto-prefill from Redux
 │
 └── app/                                       # Framework Delivery (Next.js App Router)
-    ├── api/                                   # Backend & 3rd-Party Simulation
+    ├── api/                                   # External Backend & 3rd-Party Simulation
     │   ├── products/
     │   │   ├── route.ts                       # GET /api/products (Mock Backend)
     │   │   └── [id]/route.ts                  # GET /api/products/[id] (Mock Backend)
-    │   └── cekongkir/
-    │       └── cities/route.ts                # GET /api/cekongkir/cities (Mock External CekOngkir API)
+    │   ├── cekongkir/
+    │   │   └── cities/route.ts                # GET /api/cekongkir/cities (Mock External CekOngkir API)
+    │   └── orders/
+    │       ├── route.ts                       # POST & GET /api/orders (Mock Backend Order Service)
+    │       └── [id]/route.ts                  # GET /api/orders/[id] (Mock Backend)
     ├── products/
     │   └── [id]/
-    │       ├── page.tsx                       # Route detail dengan generateMetadata
+    │       ├── page.tsx                       # Product detail route with generateMetadata
     │       └── checkout/
-    │           └── page.tsx                   # Route checkout dengan dynamic metadata
-    ├── globals.css                            # Styling sistem desain Telkomsel Orbit & Modal
-    ├── layout.tsx                             # Shell layout induk (Dibalut StoreProvider & VisitorModal)
-    └── page.tsx                               # Entry route katalog utama
+    │           └── page.tsx                   # Checkout route with dynamic metadata
+    ├── globals.css                            # Telkomsel Orbit design system & modal styling
+    ├── layout.tsx                             # Root layout shell (Wrapped in StoreProvider & VisitorModal)
+    └── page.tsx                               # Main catalog entry route
 ```
 
 ---
 
-## 📦 Treatment DTO & Anti-Corruption Layer (CekOngkir)
+## 📦 DTO & Anti-Corruption Layer Pattern (CekOngkir)
 
-Layanan **CekOngkir** disimulasikan sebagai pihak ketiga (3rd party) yang memiliki format data sendiri (*snake_case*, RajaOngkir-style):
+The **CekOngkir** service is simulated as an external third party with its own custom schema (*snake_case*, RajaOngkir-style):
 
 ```json
 {
@@ -97,10 +101,10 @@ Layanan **CekOngkir** disimulasikan sebagai pihak ketiga (3rd party) yang memili
 }
 ```
 
-Di dalam lapisan infrastruktur ([`src/infrastructure/shipping/cekongkir-shipping-service.ts`](file:///home/ruslan/workspace/experiments/clean-architecture/clean-architecture-fundamentals/src/infrastructure/shipping/cekongkir-shipping-service.ts)), kita menerapkan pola **DTO (Data Transfer Object)** dan **Mapper (Anti-Corruption Layer)**:
+Inside the infrastructure layer ([`src/infrastructure/shipping/cekongkir-shipping-service.ts`](file:///home/ruslan/workspace/experiments/clean-architecture/clean-architecture-fundamentals/src/infrastructure/shipping/cekongkir-shipping-service.ts)), we implement the **DTO (Data Transfer Object)** and **Mapper (Anti-Corruption Layer)** patterns:
 
 ```typescript
-// DTO Eksternal:
+// External DTO Schema:
 export interface CekOngkirDestinationDto {
   city_id: string
   nama_kota: string
@@ -110,7 +114,7 @@ export interface CekOngkirDestinationDto {
   kurir: string
 }
 
-// Mapper ke Domain Entity:
+// Mapper to Domain Entity:
 export class ShippingMapper {
   static toDomain(dto: CekOngkirDestinationDto): DestinationCity {
     return {
@@ -125,13 +129,15 @@ export class ShippingMapper {
 }
 ```
 
-Dengan pola ini:
-- **Domain Layer & Use Cases** tetap 100% bersih dan independen dari skema vendor pihak ketiga mana pun.
-- Apabila vendor logistik di masa mendatang berganti (misal ke SiCepat, J&T, atau DHL), kita hanya perlu membuat adapter infrastruktur baru tanpa mengubah logika bisnis *Checkout*.
+Benefits of this approach:
+- **Domain Layer & Use Cases** remain 100% clean and independent of third-party vendor schemas.
+- If the shipping provider changes in the future (e.g. SiCepat, J&T, or DHL), only a new infrastructure adapter is created without modifying the core *Checkout* business logic.
 
 ---
 
-## 🔄 Arah Ketergantungan (The Dependency Rule)
+## 🔄 The Dependency Rule
+
+Dependencies strictly point inwards toward the Domain:
 
 ```
 Next.js App Router (UI / Server Action / generateMetadata)
@@ -140,58 +146,57 @@ Next.js App Router (UI / Server Action / generateMetadata)
    Controllers (checkout-controller.ts / shipping-controller.ts)
         │
         ▼
-    Use Cases (checkout.ts / get-shipping-cities.ts)
+     Use Cases (checkout.ts / get-shipping-cities.ts)
         │
-        ├──▶ ShippingService Port ──[implements]──▶ CekOngkirShippingService ──▶ /api/cekongkir/cities (Vendor 3rd-Party)
+        ├──▶ ShippingService Port ──[implements]──▶ CekOngkirShippingService ──▶ /api/cekongkir/cities (3rd-Party Vendor)
         ├──▶ ProductRepository Port ─[implements]──▶ ApiProductRepository ──▶ /api/products (Backend)
         └──▶ OrderRepository Port ────[implements]──▶ ApiOrderRepository ──▶ /api/orders (Backend)
 ```
 
 ---
 
-## 🚀 Cara Menjalankan
+## 🚀 Getting Started
 
-Project sudah **100% self-contained**:
+The project is **100% self-contained**:
 
 ```bash
-cd /home/ruslan/workspace/experiments/clean-architecture/clean-architecture-fundamentals
+cd clean-architecture-fundamentals
+pnpm install
 pnpm dev
 ```
 
-Buka di browser:
-- Halaman Katalog: [http://localhost:3000](http://localhost:3000)
-- Halaman Detail: [http://localhost:3000/products/orbit-star-h3](http://localhost:3000/products/orbit-star-h3)
-- Halaman Checkout: [http://localhost:3000/products/orbit-star-h3/checkout](http://localhost:3000/products/orbit-star-h3/checkout)
-- API External CekOngkir: [http://localhost:3000/api/cekongkir/cities](http://localhost:3000/api/cekongkir/cities)
+Open in your browser:
+- Catalog Page: [http://localhost:3000](http://localhost:3000)
+- Product Detail Page: [http://localhost:3000/products/orbit-star-h3](http://localhost:3000/products/orbit-star-h3)
+- Checkout Page: [http://localhost:3000/products/orbit-star-h3/checkout](http://localhost:3000/products/orbit-star-h3/checkout)
+- External CekOngkir Mock API: [http://localhost:3000/api/cekongkir/cities](http://localhost:3000/api/cekongkir/cities)
 
 ---
 
-## 🧪 Pengujian Bisnis (The Testability Claim)
+## 🧪 Business Rules Testing (The Testability Claim)
 
-Clean Architecture menjamin:
+Clean Architecture ensures:
 > *"The business rules can be tested without the UI, Database, Web Server, or any other external element."*
 
-Jalankan test suite murni via **Vitest**:
+Run the pure test suite via **Vitest**:
 
 ```bash
 pnpm test
 ```
 
-- [`tests/use-cases/get-products.test.ts`](file:///home/ruslan/workspace/experiments/clean-architecture/clean-architecture-fundamentals/tests/use-cases/get-products.test.ts): Menguji interactor use case `getProducts` dan `getProductById` menggunakan test double `FakeProductRepository` secara murni di memori tanpa HTTP fetch, tanpa server Next.js, dan tanpa DOM/React.
-- [`tests/domain/product.test.ts`](file:///home/ruslan/workspace/experiments/clean-architecture/clean-architecture-fundamentals/tests/domain/product.test.ts): Menguji aturan bisnis entity `Product` dan fungsi formatting harga `formatPrice`.
-- [`tests/presentation/product-listing-ui.test.tsx`](file:///home/ruslan/workspace/experiments/clean-architecture/clean-architecture-fundamentals/tests/presentation/product-listing-ui.test.tsx): Menguji komponen layer presentasi (`ProductCard`, `ProductGrid`, dan `ProductsPage` Server Component) dengan simulasi state sukses dan kegagalan controller via `@testing-library/react`.
-- [`tests/presentation/visitor-redux-flow.test.tsx`](file:///home/ruslan/workspace/experiments/clean-architecture/clean-architecture-fundamentals/tests/presentation/visitor-redux-flow.test.tsx): Menguji reducer `visitorSlice`, sinkronisasi profil visitor, integrasi badge `Navbar`, form `VisitorModal`, dan auto-prefill nama & alamat pada `CheckoutForm`.
+- [`tests/use-cases/get-products.test.ts`](file:///home/ruslan/workspace/experiments/clean-architecture/clean-architecture-fundamentals/tests/use-cases/get-products.test.ts): Tests `getProducts` and `getProductById` use case interactors using a pure in-memory `FakeProductRepository` test double without HTTP requests, Next.js server, or DOM/React rendering.
+- [`tests/domain/product.test.ts`](file:///home/ruslan/workspace/experiments/clean-architecture/clean-architecture-fundamentals/tests/domain/product.test.ts): Tests pure domain business rules for the `Product` entity and the `formatPrice` currency formatting helper.
+- [`tests/presentation/product-listing-ui.test.tsx`](file:///home/ruslan/workspace/experiments/clean-architecture/clean-architecture-fundamentals/tests/presentation/product-listing-ui.test.tsx): Tests presentation components (`ProductCard`, `ProductGrid`, and `ProductsPage` Server Component) simulating controller success and failure states via `@testing-library/react`.
+- [`tests/presentation/visitor-redux-flow.test.tsx`](file:///home/ruslan/workspace/experiments/clean-architecture/clean-architecture-fundamentals/tests/presentation/visitor-redux-flow.test.tsx): Tests the `visitorSlice` reducer, visitor profile synchronization, `Navbar` badge integration, `VisitorModal` form, and auto-prefill for name and address in `CheckoutForm`.
 
 ---
 
-## 🏬 Redux Store di Layer Presentation
+## 🏬 Redux Store in the Presentation Layer
 
-Sesuai kaidah Clean Architecture:
-1. **Domain & Use Cases tidak boleh bergantung pada UI State**:
-   - `domain/` dan `use-cases/` tetap murni TypeScript, tidak mengimpor `@reduxjs/toolkit` maupun `react-redux`.
-2. **Redux diletakkan eksklusif di Presentation Layer (`src/presentation/store/`)**:
-   - Berfungsi untuk mengelola state sesi visitor (nama, kota domisili, alamat pengiriman, modal onboarding).
-   - Menggunakan `localStorage` (`orbit_visitor_profile`) untuk persistensi client-side agar data tidak hilang ketika halaman di-refresh.
-   - Menyediakan auto-prefill ke komponen form interaktif (`CheckoutForm`) dan menampilkan profil aktif pada `Navbar`.
-
-
+In accordance with Clean Architecture principles:
+1. **Domain & Use Cases must never depend on UI State**:
+   - `domain/` and `use-cases/` remain pure TypeScript, with no imports from `@reduxjs/toolkit` or `react-redux`.
+2. **Redux is located exclusively in the Presentation Layer (`src/presentation/store/`)**:
+   - Manages client-side visitor session state (name, city, delivery address, onboarding modal).
+   - Uses `localStorage` (`orbit_visitor_profile`) for client-side persistence across page refreshes.
+   - Provides seamless auto-prefill to interactive form components (`CheckoutForm`) and displays the active visitor profile in the `Navbar`.

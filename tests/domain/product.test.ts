@@ -4,13 +4,13 @@ import { formatPrice } from '@/domain/product'
 /**
  * DOMAIN LAYER UNIT TEST — Pure Business Rules
  *
- * Menguji aturan bisnis murni tanpa dependensi eksternal sama sekali.
+ * Tests pure business rules with zero external dependencies.
  */
 
 describe('Domain: Product Business Rules', () => {
   it('harus memformat angka harga menjadi format mata uang Rupiah Indonesia (IDR)', () => {
     const formatted = formatPrice(455000)
-    // Format IDR menghasilkan 'Rp 455.000' (dengan non-breaking space)
+    // IDR formatting produces 'Rp 455.000' (with non-breaking space)
     expect(formatted.replace(/\s+/g, ' ')).toMatch(/Rp\s?455\.000/)
   })
 

@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 /**
  * BACKEND API ROUTE — /api/products/[id]
  *
- * Bertindak sebagai simulasi REST API backend eksternal (Infrastruktur Luar).
- * Mengembalikan single product berdasarkan identifier atau 404 jika tidak ditemukan.
+ * Acts as an external backend REST API simulation (Outer Infrastructure).
+ * Returns a single product by identifier or 404 if not found.
  */
 
 const PRODUCTS_DATABASE = [

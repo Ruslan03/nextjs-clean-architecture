@@ -57,13 +57,13 @@ describe('Presentation Layer: Product Listing Flow UI Tests', () => {
     it('harus merender nama produk, harga terformat rupiah, dan tombol detail', () => {
       render(<ProductCard product={dummyProducts[0]} />)
 
-      // Nama produk
+      // Product name
       expect(screen.getByText('Orbit Star H3')).toBeInTheDocument()
 
-      // Harga terformat IDR
+      // IDR formatted price
       expect(screen.getByText(/455\.000/)).toBeInTheDocument()
 
-      // Link tombol navigasi ke halaman detail
+      // Navigation button link to detail page
       const link = screen.getByRole('link', { name: /Lihat Detail/i })
       expect(link).toBeInTheDocument()
       expect(link).toHaveAttribute('href', '/products/orbit-star-h3')
@@ -100,14 +100,14 @@ describe('Presentation Layer: Product Listing Flow UI Tests', () => {
       const pageUi = await ProductsPage()
       render(pageUi)
 
-      // Header halaman
+      // Page header
       expect(screen.getByText('Pilihan Modem Telkomsel Orbit')).toBeInTheDocument()
       expect(screen.getByText('Katalog Resmi')).toBeInTheDocument()
 
-      // Counter produk
+      // Product counter
       expect(screen.getByText('2 perangkat tersedia')).toBeInTheDocument()
 
-      // Produk dalam grid
+      // Products in grid
       expect(screen.getByText('Orbit Star H3')).toBeInTheDocument()
       expect(screen.getByText('Orbit Max H2')).toBeInTheDocument()
     })
@@ -122,7 +122,7 @@ describe('Presentation Layer: Product Listing Flow UI Tests', () => {
       const pageUi = await ProductsPage()
       render(pageUi)
 
-      // Alert error
+      // Error alert
       expect(screen.getByText('Koneksi Gagal')).toBeInTheDocument()
       expect(
         screen.getByText(/Tidak dapat terhubung ke backend API di localhost:8084/i)

@@ -4,8 +4,8 @@ import { NextResponse } from 'next/server'
  * EXTERNAL 3RD-PARTY SERVICE SIMULATION — "CekOngkir" API
  * Endpoint: /api/cekongkir/cities
  *
- * Mensimulasikan REST API dari penyedia logistik eksternal ("CekOngkir").
- * Memiliki struktur payload tersendiri dengan penamaan snake_case khas API pihak ketiga.
+ * Simulates a REST API from an external third-party logistics provider ("CekOngkir").
+ * Has its own payload structure with snake_case naming typical of third-party APIs.
  */
 
 const CEK_ONGKIR_DATABASE = [

@@ -1,7 +1,7 @@
 /**
- * PRESENTATION LAYER — Redux Visitor Slice
+ * PRESENTATION LAYER — Redux Product Slice
  *
- * Manages visitor session state (Name, City, Delivery Address) in the client presentation layer.
+ * Manages product list pagination state in the client presentation layer.
  * Keeps domain and use-case layers 100% agnostic of UI state management.
  */
 

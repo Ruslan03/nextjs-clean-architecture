@@ -196,7 +196,7 @@ describe('Presentation Layer: Redux Visitor Store & UI Flow', () => {
       fireEvent.change(addressInput, { target: { value: 'Jl. Asia Afrika No. 20' } })
       fireEvent.click(submitBtn)
 
-      // State harus terupdate
+      // State must be updated
       const updatedProfile = store.getState().visitor.profile
       expect(updatedProfile.name).toBe('Dewi Sartika')
       expect(updatedProfile.address).toBe('Jl. Asia Afrika No. 20')
@@ -242,12 +242,12 @@ describe('Presentation Layer: Redux Visitor Store & UI Flow', () => {
         </Provider>
       )
 
-      // Memverifikasi badge otomatisasi terisi
+      // Verify auto-fill notification badge is displayed
       expect(
         screen.getByText(/Data nama & alamat diisi otomatis dari profil pengunjung Anda\./i)
       ).toBeInTheDocument()
 
-      // Memverifikasi value input terisi otomatis
+      // Verify input values are automatically populated
       const nameInput = screen.getByLabelText(/Nama Lengkap/i) as HTMLInputElement
       const addressInput = screen.getByLabelText(/Alamat Lengkap Pengiriman/i) as HTMLTextAreaElement
       const citySelect = screen.getByLabelText(/Kota \/ Kabupaten Tujuan/i) as HTMLSelectElement

@@ -4,8 +4,8 @@ import { NextResponse } from 'next/server'
  * EXTERNAL BACKEND SIMULATION — Order Management Service
  * Endpoint: /api/orders
  *
- * Mensimulasikan REST API Order Service backend eksternal.
- * Menangani penyimpanan dan query pesanan secara independen dari aplikasi utama.
+ * Simulates an external backend Order Service REST API.
+ * Handles order persistence and retrieval independently from the main application.
  */
 
 interface ServerOrderRecord {

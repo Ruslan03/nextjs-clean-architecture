@@ -7,14 +7,14 @@ import { ProductRepository } from '@/use-cases/interfaces/product-repository'
 /**
  * CLEAN ARCHITECTURE TEST SUITE — Product Listing Flow
  *
- * Menguji klaim Clean Architecture:
+ * Tests the Clean Architecture claim:
  * "The business rules can be tested without the UI, Database, Web Server,
  *  or any other external element."
  *
- * Pengujian Use Case ini berjalan 100% murni di memori tanpa:
- * 1. Tanpa Next.js Web Server / HTTP Network.
- * 2. Tanpa Database nyata.
- * 3. Tanpa Browser / UI rendering.
+ * This Use Case test runs 100% purely in memory without:
+ * 1. Next.js Web Server / HTTP Network.
+ * 2. Real Database.
+ * 3. Browser / UI rendering.
  */
 
 describe('Use Case: Get Products (Product Listing Flow)', () => {
@@ -52,13 +52,13 @@ describe('Use Case: Get Products (Product Listing Flow)', () => {
   }
 
   it('harus mengembalikan daftar produk dengan benar dari repository port', async () => {
-    // 1. Arrange: Siapkan fake repository tanpa web server / DB
+    // 1. Arrange: Prepare fake repository without web server or DB
     const fakeRepo = new FakeProductRepository(dummyProducts)
 
-    // 2. Act: Eksekusi use case
+    // 2. Act: Execute use case
     const result = await getProducts(fakeRepo)
 
-    // 3. Assert: Verifikasi aturan bisnis
+    // 3. Assert: Verify business rules
     expect(result).toHaveLength(2)
     expect(result[0].id).toBe('orbit-star-h3')
     expect(result[0].name).toBe('Orbit Star H3')
@@ -67,10 +67,10 @@ describe('Use Case: Get Products (Product Listing Flow)', () => {
   })
 
   it('harus mengembalikan array kosong jika katalog produk belum memiliki item', async () => {
-    // 1. Arrange: Fake repository kosong
+    // 1. Arrange: Empty fake repository
     const emptyRepo = new FakeProductRepository([])
 
-    // 2. Act: Eksekusi use case
+    // 2. Act: Execute use case
     const result = await getProducts(emptyRepo)
 
     // 3. Assert
@@ -79,13 +79,13 @@ describe('Use Case: Get Products (Product Listing Flow)', () => {
   })
 
   it('harus meneruskan error jika repository port mengalami kegagalan teknis', async () => {
-    // 1. Arrange: Mock repository yang mensimulasikan kegagalan
+    // 1. Arrange: Mock repository simulating failure
     const mockFailingRepo: ProductRepository = {
       getProducts: vi.fn().mockRejectedValue(new Error('Koneksi infrastruktur terputus')),
       getProductById: vi.fn(),
     }
 
-    // 2. Act & Assert: Memastikan use case tidak menelan error tak terduga
+    // 2. Act & Assert: Ensure the use case propagates unexpected errors
     await expect(getProducts(mockFailingRepo)).rejects.toThrow('Koneksi infrastruktur terputus')
     expect(mockFailingRepo.getProducts).toHaveBeenCalledTimes(1)
   })

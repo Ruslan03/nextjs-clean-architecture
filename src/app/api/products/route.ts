@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server'
 /**
  * BACKEND API ROUTE — /api/products
  *
- * Bertindak sebagai simulasi REST API backend eksternal (Infrastruktur Luar).
- * Mengembalikan data mentah produk seluler/modem dengan format DTO backend.
+ * Acts as an external backend REST API simulation (Outer Infrastructure).
+ * Returns raw cellular/modem product data in backend DTO format.
  */
 
 const PRODUCTS_DATABASE = [
